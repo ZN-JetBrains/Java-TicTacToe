@@ -13,6 +13,7 @@ public class Main
         final int size = 3;
         char[][] grid = convertInputToGrid(userInput, size);
         printGrid(grid, size);
+        printGameState(grid, size);
     }
 
     /**
@@ -61,5 +62,154 @@ public class Main
         }
 
         System.out.println("---------");
+    }
+
+    /**
+     * Prints the state of the game by calling helper methods to
+     * determine if there is a winner, if game is not over, if
+     * something has gone wrong
+     *
+     * @param aGrid char[][]: the 2D array that represents the game board
+     * @param aSize int: the size of the row and columns of the 2D array
+     */
+    private static void printGameState(char[][] aGrid, final int aSize)
+    {
+        final char playerX = 'X';
+        final char playerO = 'O';
+        final char emptySpace = '_';
+
+        // Impossible state
+        if (isVictorious(aGrid, playerX) && isVictorious(aGrid, playerO)
+                || getDifference(aGrid, aSize, playerX, playerO) > 1)
+        {
+            System.out.println("Impossible");
+            return;
+        }
+
+        // has X won?
+        if (isVictorious(aGrid, playerX))
+        {
+            System.out.println("X wins");
+            return;
+        }
+
+        // has O won?
+        if (isVictorious(aGrid, playerO))
+        {
+            System.out.println("O wins");
+            return;
+        }
+
+        // has empty spaces?
+        if (!isGameOver(aGrid, aSize, emptySpace))
+        {
+            System.out.println("Game not finished");
+            return;
+        }
+
+        // no empty spaces left and no winners => draw
+        System.out.println("Draw");
+    }
+
+    /**
+     * Returns if the game is over by checking if the 2D char array
+     * no longer has any chars specified by the aEmptyMark parameter
+     *
+     * @param aGrid char[][]: the 2D char array that represents a game board
+     * @param aSize int: the size of the rows and columns of the 2D array
+     * @param aEmptyMark char: the char that is searched for
+     * @return boolean: if game is over
+     */
+    private static boolean isGameOver(char[][] aGrid, final int aSize, final char aEmptyMark)
+    {
+        for (int column = 0; column < aSize; ++column)
+        {
+            for (int row = 0; row < aSize; ++row)
+            {
+                if (aGrid[column][row] == aEmptyMark)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns if the specified mark has won by searching the
+     * 2D array for three in a row horizontally, vertically or
+     * diagonally
+     *
+     * @param aGrid char[][]: the 2D char array that represents a game board
+     * @param aMark char: the char to check for
+     * @return boolean: if three in a row has been found
+     */
+    private static boolean isVictorious(char[][] aGrid, final char aMark)
+    {
+        // [row][col]
+        // [0][0] [0][1] [0][2]
+        // [1][0] [1][1] [1][2]
+        // [2][0] [2][1] [2][2]
+
+        // TODO: Checks can be converted to for loops
+
+        // Horizontal checks
+        if (aGrid[0][0] == aMark && aGrid[0][1] == aMark && aGrid[0][2] == aMark ||
+                aGrid[1][0] == aMark && aGrid[1][1] == aMark && aGrid[1][2] == aMark ||
+                aGrid[2][0] == aMark && aGrid[2][1] == aMark && aGrid[2][2] == aMark)
+        {
+            return true;
+        }
+
+        // Vertical checks
+        if (aGrid[0][0] == aMark && aGrid[1][0] == aMark && aGrid[2][0] == aMark ||
+                aGrid[0][1] == aMark && aGrid[1][1] == aMark && aGrid[2][1] == aMark ||
+                aGrid[0][2] == aMark && aGrid[1][2] == aMark && aGrid[2][2] == aMark)
+        {
+            return true;
+        }
+
+        // Diagonal checks
+        if (aGrid[0][0] == aMark && aGrid[1][1] == aMark && aGrid[2][2] == aMark ||
+                aGrid[2][0] == aMark && aGrid[1][1] == aMark && aGrid[0][2] == aMark)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns the absolute difference between the count of aPlayerX
+     * chars and aPlayerO chars in the 2D char array
+     *
+     * @param aGrid char[][]: the 2D char array that represents a game board
+     * @param aSize int: size of the 2D arrays rows and columns
+     * @param aPlayerX char: the char that represents one player
+     * @param aPlayerO char: the char that represents another player
+     * @return int: the absolute difference of X and O char counts
+     */
+    private static int getDifference(char[][] aGrid, final int aSize, final char aPlayerX, final char aPlayerO)
+    {
+        int xCounter = 0;
+        int oCounter = 0;
+
+        for (int column = 0; column < aSize; ++column)
+        {
+            for (int row = 0; row < aSize; ++row)
+            {
+                if (aGrid[column][row] == aPlayerX)
+                {
+                    ++xCounter;
+                }
+                else if (aGrid[column][row] == aPlayerO)
+                {
+                    ++oCounter;
+                }
+            }
+        }
+
+        return Math.abs(xCounter - oCounter);
     }
 }
