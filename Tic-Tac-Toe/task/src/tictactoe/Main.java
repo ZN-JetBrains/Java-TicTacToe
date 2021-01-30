@@ -13,7 +13,63 @@ public class Main
         final int size = 3;
         char[][] grid = convertInputToGrid(userInput, size);
         printGrid(grid, size);
-        printGameState(grid, size);
+
+        char playerX = 'X';
+
+        // Stage 4
+        boolean isValid = false;
+        while (!isValid)
+        {
+            System.out.print("Enter the coordinates: ");
+            int inputX;
+            int inputY;
+
+            try
+            {
+                inputX = scanner.nextInt();
+                inputY = scanner.nextInt();
+            }
+            catch (Exception e)
+            {
+                System.out.println("You should enter numbers!");
+                scanner.nextLine();
+                continue;
+            }
+
+            int rowPosition = inputX - 1;
+            int colPosition = inputY - 1;
+
+            if (isCoordinatesValid(size, rowPosition, colPosition))
+            {
+                if (isOccupied(grid, rowPosition, colPosition))
+                {
+                    System.out.println("This cell is occupied! Choose another one!");
+                }
+                else
+                {
+                    isValid = true;
+                    grid[rowPosition][colPosition] = playerX;
+                }
+            }
+            else
+            {
+                System.out.println("Coordinates should be from 1 to 3!");
+            }
+        }
+
+        printGrid(grid, size);
+
+        //printGameState(grid, size);
+    }
+
+    private static boolean isCoordinatesValid(final int aSize, final int aX, final int aY)
+    {
+        return aX >= 0 && aX < aSize && aY >= 0 && aY < aSize;
+    }
+
+    private static boolean isOccupied(char[][] aGrid, final int aX, final int aY)
+    {
+        return aGrid[aX][aY] != '_';
     }
 
     /**
